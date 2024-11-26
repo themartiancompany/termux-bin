@@ -113,7 +113,7 @@ elif [[ "${_git}" == false ]]; then
     _url="${_github_url}"
     if [[ "${_tag_name}" == "pkgver" ]]; then
       _dl_name="${_pkgname}-app_v${pkgver}+github-debug_${_aarch}.apk"
-      _src="${_url}/releases/download/v${pkgver}/${_dl_name}"
+      _src="${_tarname}.apk::${_url}/releases/download/v${pkgver}/${_dl_name}"
       if [[ "${_aarch}" == "arm64-v8a" ]]; then
         _sum="72c8d3cf7cb12d8c550a6b2750bd00bc99ad084c70f8ff0d2ffa9189e685ce4f"
       elif [[ "${_aarch}" == "armeabi-v7a" ]]; then
