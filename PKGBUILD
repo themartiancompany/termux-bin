@@ -110,10 +110,8 @@ package() {
   local \
     _dest_dir \
     _dest \
+    _aarch \
     _arch
-  _arch="$( \
-    uname \
-      -m)"
   _dest_dir="/usr/bin"
   _dest="${_pkgname}.apk"
   if [[ "${_os}" == "Android" ]]; then
@@ -121,6 +119,15 @@ package() {
     _dest="base.apk"
   fi
   if [[ "${_fdroid}" == "true" ]]; then
+    _arch="$( \
+      uname \
+        -m)"
+    _aarch="${_arch}"
+    if [[ "${_arch}" == "armv7l" ]]; then
+      _aarch="armeabi-v7a"
+    elif [[ "${_arch}" == "aarch64" ]]; then
+      _aarch="arm64-v8a"
+    fi
     mkdir \
       "${srcdir}/build"
     cd \
@@ -130,15 +137,19 @@ package() {
     find \
       "lib" \
       ! -wholename \
-        "lib/${_arch}/*" \
+        "lib/${_aarch}/*" \
       -exec \
         rm \
           {} \;
     _tarname="${_tarname}-clean"
     7z \
       "a" \
-      "${srcdir}/${_tarname}.apk" \
+      "${srcdir}/${_tarname}.zip" \
       .
+    cd ..
+    mv \
+     "${_tarname}.zip" \
+     "${_tarname}.apk"
   fi
   install \
     -dm755 \
