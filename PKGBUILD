@@ -157,7 +157,7 @@ package() {
   install \
     -Dm644 \
     "${srcdir}/${_tarname}.apk" \
-    "${pkgdir}/${_dest_dir}/${_dest}"
+    "${pkgdir}${_dest_dir}/${_dest}"
 }
 
 # vim: ft=sh syn=sh et
