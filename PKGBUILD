@@ -109,12 +109,36 @@ validgpgkeys=(
 package() {
   local \
     _dest_dir \
-    _dest
+    _dest \
+    _arch
+  _arch="$( \
+    uname \
+      -m)"
   _dest_dir="/usr/bin"
   _dest="${_pkgname}.apk"
   if [[ "${_os}" == "Android" ]]; then
     _dest_dir="/system/app/${_Pkg}"
     _dest="base.apk"
+  fi
+  if [[ "${_fdroid}" == "true" ]]; then
+    mkdir \
+      "${srcdir}/build"
+    cd \
+      "build"
+    unzip \
+      "${srcdir}/${_tarname}.apk"
+    find \
+      "lib" \
+      ! -wholename \
+        "lib/${_arch}/*" \
+      -exec \
+        rm \
+          {} \;
+    _tarname="${_tarname}-clean"
+    7z \
+      "a" \
+      "${srcdir}/${_tarname}.apk" \
+      .
   fi
   install \
     -dm755 \
