@@ -78,8 +78,8 @@ source=()
 sha256sums=()
 _fdroid_url="https://f-droid.org/repo"
 _http="https://github.com"
-_ns="${_pkg}"
-_github_url="${_http}/${_ns}/${pkg}-app"
+_ns="${_pkgname}"
+_github_url="${_http}/${_ns}/${_pkgname}-app"
 # _tag="${pkgrel}"
 _tag="${pkgver}"
 # _tag_name="pkgrel"
@@ -87,6 +87,8 @@ _tag_name="pkgver"
 _tarname="${_pkgname}-${pkgver}-${pkgrel}"
 [[ "${_offline}" == "true" ]] && \
   _url="file://${HOME}/${pkgname}"
+source=()
+sha256sums=()
 if [[ "${_git}" == true ]]; then
   makedepends+=(
     "git"
@@ -99,27 +101,34 @@ elif [[ "${_git}" == false ]]; then
     if [[ "${_tag_name}" == 'pkgrel' ]]; then
       _src="${_tarname}.apk::${_url}/${_pkg}_${pkgrel}.apk"
       _sig="${_tarname}.apk.sig::${_url}/${_pkg}_${pkgrel}.apk.asc"
+      source+=(
+        "${_sig}"
+      )
+      sha256sums+=(
+        "SKIP"
+      )
       _sum="f137958392a800fca583bfc00f191b8edb29b77c705fddf27dffb6c26ca5d413"
     fi
   elif [[ "${_github}" == "true" ]]; then
     _url="${_github_url}"
     if [[ "${_tag_name}" == "pkgver" ]]; then
-      _dl_name="${_pkg}-app_v${pkgver}+github-debug_${_aarch}.apk"
+      _dl_name="${_pkgname}-app_v${pkgver}+github-debug_${_aarch}.apk"
       _src="${_url}/releases/download/v${pkgver}/${_dl_name}"
       _sum="ciao"
+      if [[ "${_aarch}" == "x86_64" ]]; then
+        _sum="cc63b1cda554adf84a152f99703847871790943fb0ce492ec6d200bd0bec2dc6"
+      fi
     elif [[ "${_tag_name}" == "commit" ]]; then
       _src="${_tarname}.zip::${_url}/archive/${_commit}.zip"
       _sum="dacf4a05e8dab38c49034e5d58deb477c36d005fe81324cf7973ba5487d87eb7"
     fi
   fi
 fi
-source=(
+source+=(
   "${_src}"
-  "${_sig}"
 )
-sha256sums=(
+sha256sums+=(
   "${_sum}"
-  "SKIP"
 )
 noextract=(
   "${_src}"
