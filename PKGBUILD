@@ -84,7 +84,7 @@ if [[ "${_git}" == false ]]; then
     if [[ "${_tag_name}" == 'pkgrel' ]]; then
       _src="${_tarname}.apk::${_url}/${_pkg}_${pkgrel}.apk"
       _sig="${_tarname}.apk.sig::${_url}/${_pkg}_${pkgrel}.apk.asc"
-      _sum="3b58721af4a79f42f5e6f6832a998493719b519f0d65d942d15a9593845049e4"
+      _sum="f137958392a800fca583bfc00f191b8edb29b77c705fddf27dffb6c26ca5d413"
     fi
   elif [[ "${_github}" == "true" ]]; then
     if [[ "${_tag_name}" == "commit" ]]; then
