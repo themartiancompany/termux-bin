@@ -114,8 +114,13 @@ elif [[ "${_git}" == false ]]; then
     if [[ "${_tag_name}" == "pkgver" ]]; then
       _dl_name="${_pkgname}-app_v${pkgver}+github-debug_${_aarch}.apk"
       _src="${_url}/releases/download/v${pkgver}/${_dl_name}"
-      _sum="ciao"
-      if [[ "${_aarch}" == "x86_64" ]]; then
+      if [[ "${_aarch}" == "arm64-v8a" ]]; then
+        _sum="72c8d3cf7cb12d8c550a6b2750bd00bc99ad084c70f8ff0d2ffa9189e685ce4f"
+      elif [[ "${_aarch}" == "armeabi-v7a" ]]; then
+        _sum="925a169cfafa2181066bb52c58da7b3514110dfd5f9b8f6d84df897842988e93"
+      elif [[ "${_aarch}" == "x86" ]]; then
+        _sum="084ada98b58d28e9df38b234afb8653a53e37a237e7446e3e3077c68c5281b7c"
+      elif [[ "${_aarch}" == "x86_64" ]]; then
         _sum="cc63b1cda554adf84a152f99703847871790943fb0ce492ec6d200bd0bec2dc6"
       fi
     elif [[ "${_tag_name}" == "commit" ]]; then
