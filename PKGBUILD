@@ -55,7 +55,7 @@ _os="$( \
 [[ "${_os}" != "GNU/Linux" ]] && \
 [[ "${_os}" == "Android" ]] && \
   depends+=(
-    inteppacman
+    'inteppacman'
   )
 optdepends=(
 )
