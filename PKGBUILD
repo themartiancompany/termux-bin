@@ -1,13 +1,35 @@
 # SPDX-License-Identifier: AGPL-3.0
+
+#    ----------------------------------------------------------------------
+#    Copyright © 2024, 2025  Pellegrino Prevete
 #
+#    All rights reserved
+#    ----------------------------------------------------------------------
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU Affero General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU Affero General Public License for more details.
+#
+#    You should have received a copy of the GNU Affero General Public License
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 # Maintainer: Truocolo <truocolo@aol.com>
 # Maintainer: Pellegrino Prevete (tallero) <pellegrinoprevete@gmail.com>
 
 _fdroid="false"
 _github="true"
-_strip="false"
-if [[ "${_fdroid}" == "true" ]]; then
-  _strip="true"
+_system_install="false"
+_user_install="true"
+if [[ "${_system_install}" == "true" ]]; then
+  _install_type="system"
+elif [[ "${_user_install}" == "true" ]]; then
+  _install_type="user"
 fi
 _offline="false"
 _git="false"
@@ -29,10 +51,10 @@ _pkgdesc=(
 )
 pkgdesc="${_pkgdesc[*]}"
 arch=(
-  arm
-  aarch64
-  x86_64
-  i686
+  'arm'
+  'aarch64'
+  'x86_64'
+  'i686'
 )
 _arch="$( \
   uname \
@@ -45,7 +67,7 @@ elif [[ "${_arch}" == "aarch64" ]]; then
 fi
 url="${_pkgname}.dev"
 license=(
-  GPL3
+  'GPL3'
 )
 depends=(
 )
@@ -143,71 +165,6 @@ validgpgkeys=(
   "37D2C98789D8311948394E3E41E7044E1DBA2E89"
 )
 
-_strip_extra_libs() {
-  mkdir \
-    -p \
-    "${srcdir}/build"
-  cd \
-    "build"
-  7z \
-    -y \
-    x \
-    "${srcdir}/${_tarname}.apk" 1>&/dev/null
-  _extra_libs=(
-    $(find \
-        "lib" \
-        -type \
-          "f" \
-        ! -wholename \
-          "lib/${_aarch}/*")
-  )
-  _manifests=(
-    $(find \
-      "META-INF" \
-      -type \
-        "f" \
-      -wholename \
-        "*.MF") 
-    $(find \
-      "META-INF" \
-      -type \
-        "f" \
-      -wholename \
-        "*.SF") 
-  )
-  for _lib in "${_extra_libs[@]}"; do
-    for _manifest in "${_manifests[@]}"; do
-      echo \
-        "removing mentions of '${_lib}' from '${_manifest}'"
-      sed \
-        "\|${_lib}|,+1d" \
-        -i \
-        "${_manifest}"
-      cat \
-        "${_manifest}" | \
-        grep \
-          "${_lib}" || \
-        true
-      rm \
-        -rf \
-        "${_lib}" || \
-        true
-    done
-  done
-  # TODO: resign apk as simply rezipping it
-  # won't work unless signature verification
-  # is disabled
-  _tarname="${_tarname}-clean"
-  7z \
-    "a" \
-    "${srcdir}/${_tarname}.zip" \
-    . 1>/dev/null
-  cd ..
-  mv \
-   "${_tarname}.zip" \
-   "${_tarname}.apk"
-}
-
 package() {
   local \
     _dest_dir \
@@ -219,11 +176,12 @@ package() {
   _dest_dir="/usr/bin"
   _dest="${_pkgname}.apk"
   if [[ "${_os}" == "Android" ]]; then
-    _dest_dir="/system/app/${_Pkg}"
+    if [[ "${_install_type}" == "system" ]]; then
+      _dest_dir="/system/app/${_Pkg}"
+    elif [[ "${_install_type}" == "user" ]]; then
+      _dest_dir="/data/app/${_pkg}"
+    fi
     _dest="base.apk"
-  fi
-  if [[ "${_fdroid}" == "true" ]]; then
-    _strip_extra_lib
   fi
   install \
     -dm755 \
